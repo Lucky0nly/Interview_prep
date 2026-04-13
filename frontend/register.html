@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | AI Interview Preparation System</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script defer src="/static/script.js"></script>
+</head>
+<body data-page="register">
+  <div class="page-backdrop"></div>
+  <header class="topbar">
+    <a class="brand" href="/">AI Interview Preparation System</a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/login">Login</a>
+      <span id="navAuthActions" class="nav-auth"></span>
+    </nav>
+  </header>
+
+  <main class="site-shell auth-shell">
+    <section class="auth-layout">
+      <article class="card auth-card">
+        <span class="eyebrow">Create your workspace</span>
+        <h1>Register and start preparing today</h1>
+        <p>Your account keeps interview history, attempt tracking, and dashboard progress in one place.</p>
+        <form id="registerForm" class="stack-form">
+          <label>
+            Email
+            <input type="email" name="email" placeholder="you@example.com" required>
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" placeholder="Use letters and numbers" required>
+          </label>
+          <button class="btn btn-primary" type="submit">Create Account</button>
+          <p id="registerMessage" class="status-message"></p>
+        </form>
+        <p class="muted-text">Already registered? <a href="/login">Log in here</a>.</p>
+      </article>
+
+      <aside class="card glass side-note">
+        <h2>What you get</h2>
+        <ul class="feature-list">
+          <li>JWT-based authentication with secure password hashing.</li>
+          <li>Timed interview sessions with answer persistence on refresh.</li>
+          <li>Score breakdowns, strengths, weaknesses, and next-step suggestions.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

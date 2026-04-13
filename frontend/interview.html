@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview Practice | AI Interview Preparation System</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script defer src="/static/script.js"></script>
+</head>
+<body data-page="interview">
+  <div class="page-backdrop"></div>
+  <header class="topbar">
+    <a class="brand" href="/">AI Interview Preparation System</a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/dashboard">Dashboard</a>
+      <span id="navAuthActions" class="nav-auth"></span>
+    </nav>
+  </header>
+
+  <main class="site-shell">
+    <section class="page-header interview-header">
+      <div>
+        <span class="eyebrow">Live practice session</span>
+        <h1>Interview workspace</h1>
+        <p id="interviewUserLabel" class="muted-text">Choose a role and difficulty to begin.</p>
+      </div>
+      <div class="timer-panel card glass">
+        <span class="timer-label">Time remaining</span>
+        <strong id="timerDisplay">00:00</strong>
+      </div>
+    </section>
+
+    <section class="double-grid interview-start-grid">
+      <article class="card">
+        <div class="section-heading">
+          <span class="eyebrow">Start interview</span>
+          <h2>Configure a fresh attempt</h2>
+        </div>
+        <form id="startInterviewForm" class="stack-form">
+          <label>
+            Role
+            <select name="role" required>
+              <option value="Software Engineer">Software Engineer</option>
+              <option value="Data Scientist">Data Scientist</option>
+              <option value="Web Developer">Web Developer</option>
+            </select>
+          </label>
+          <label>
+            Difficulty
+            <select name="difficulty" required>
+              <option value="Easy">Easy</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </label>
+          <label>
+            Number of questions
+            <input type="number" name="num_questions" min="5" max="10" value="5" required>
+          </label>
+          <div class="button-row">
+            <button class="btn btn-primary" type="submit">Start Interview</button>
+            <button class="btn btn-secondary" id="clearDraftButton" type="button">Clear Draft</button>
+          </div>
+          <p id="interviewMessage" class="status-message"></p>
+        </form>
+      </article>
+
+      <article class="card glass">
+        <div class="section-heading">
+          <span class="eyebrow">How it works</span>
+          <h2>Focused practice loop</h2>
+        </div>
+        <ul class="feature-list">
+          <li>The timer scales automatically based on the number of generated questions.</li>
+          <li>Your draft answers stay in local storage if you refresh before submitting.</li>
+          <li>Retry as often as you want. Each new attempt is saved to history and shown on the dashboard.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="interviewSession" class="card wide-card hidden"></section>
+    <section id="interviewResults" class="card wide-card hidden"></section>
+  </main>
+</body>
+</html>

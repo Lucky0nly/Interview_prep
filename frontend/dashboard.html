@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | AI Interview Preparation System</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script defer src="/static/script.js"></script>
+</head>
+<body data-page="dashboard">
+  <div class="page-backdrop"></div>
+  <header class="topbar">
+    <a class="brand" href="/">AI Interview Preparation System</a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/interview">Interview</a>
+      <span id="navAuthActions" class="nav-auth"></span>
+    </nav>
+  </header>
+
+  <main class="site-shell">
+    <section class="page-header">
+      <div>
+        <span class="eyebrow">Performance overview</span>
+        <h1>Your interview dashboard</h1>
+        <p id="dashboardUserLabel" class="muted-text">Loading your saved activity...</p>
+      </div>
+      <a class="btn btn-primary" href="/interview">Start New Interview</a>
+    </section>
+
+    <section id="statsCards" class="stats-grid"></section>
+
+    <section class="double-grid">
+      <article class="card">
+        <div class="section-heading">
+          <span class="eyebrow">By role</span>
+          <h2>Average score out of 10</h2>
+        </div>
+        <div id="roleBreakdown" class="metric-list"></div>
+      </article>
+      <article class="card">
+        <div class="section-heading">
+          <span class="eyebrow">By difficulty</span>
+          <h2>Practice distribution</h2>
+        </div>
+        <div id="difficultyBreakdown" class="metric-list"></div>
+      </article>
+    </section>
+
+    <section class="double-grid">
+      <article class="card">
+        <div class="section-heading">
+          <span class="eyebrow">Recent trend</span>
+          <h2>Last scored interviews</h2>
+        </div>
+        <div id="progressSeries" class="progress-chart"></div>
+      </article>
+      <article class="card">
+        <div class="section-heading">
+          <span class="eyebrow">Feedback pulse</span>
+          <h2>Most recent reviews</h2>
+        </div>
+        <div id="recentFeedback" class="stack-list"></div>
+      </article>
+    </section>
+
+    <section class="card wide-card">
+      <div class="section-heading">
+        <span class="eyebrow">Saved history</span>
+        <h2>All interview attempts</h2>
+      </div>
+      <p id="dashboardMessage" class="status-message"></p>
+      <div id="historyList" class="history-list"></div>
+    </section>
+  </main>
+</body>
+</html>

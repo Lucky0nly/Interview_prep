@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | AI Interview Preparation System</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script defer src="/static/script.js"></script>
+</head>
+<body data-page="login">
+  <div class="page-backdrop"></div>
+  <header class="topbar">
+    <a class="brand" href="/">AI Interview Preparation System</a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/register">Register</a>
+      <span id="navAuthActions" class="nav-auth"></span>
+    </nav>
+  </header>
+
+  <main class="site-shell auth-shell">
+    <section class="auth-layout">
+      <article class="card auth-card">
+        <span class="eyebrow">Welcome back</span>
+        <h1>Log in to continue practicing</h1>
+        <p>Use your account to access saved interview history, dashboard analytics, and AI feedback.</p>
+        <form id="loginForm" class="stack-form">
+          <label>
+            Email
+            <input type="email" name="email" placeholder="you@example.com" required>
+          </label>
+          <label>
+            Password
+            <input type="password" name="password" placeholder="Minimum 8 characters" required>
+          </label>
+          <button class="btn btn-primary" type="submit">Login</button>
+          <p id="loginMessage" class="status-message"></p>
+        </form>
+        <p class="muted-text">Need an account? <a href="/register">Create one here</a>.</p>
+      </article>
+
+      <aside class="card glass side-note">
+        <h2>Inside your practice loop</h2>
+        <ul class="feature-list">
+          <li>Protected interview sessions tied to your account.</li>
+          <li>Role-based question sets with easy, medium, and hard difficulty.</li>
+          <li>Progress charts and detailed feedback across every attempt.</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

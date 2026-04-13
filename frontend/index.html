@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Interview Preparation System</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script defer src="/static/script.js"></script>
+</head>
+<body data-page="home">
+  <div class="page-backdrop"></div>
+  <header class="topbar">
+    <a class="brand" href="/">AI Interview Preparation System</a>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/interview">Interview</a>
+      <span id="navAuthActions" class="nav-auth"></span>
+    </nav>
+  </header>
+
+  <main class="site-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Practice with structure, feedback, and momentum</span>
+        <h1>Train for technical interviews with role-based questions and AI feedback.</h1>
+        <p>
+          Generate tailored interview sets, answer in a timed environment, receive scored feedback,
+          and track how your performance evolves over time.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/register">Create Account</a>
+          <a class="btn btn-secondary" href="/interview">Start Practicing</a>
+        </div>
+      </div>
+      <div class="hero-panel card glass">
+        <p class="panel-label">Built for focused practice</p>
+        <ul class="feature-list">
+          <li>Role-aware question generation for Software Engineer, Data Scientist, and Web Developer.</li>
+          <li>AI-based scoring with a safe mock fallback when no OpenAI key is configured.</li>
+          <li>JWT-secured sessions, persistent history, retry tracking, and dashboard analytics.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section-grid">
+      <article class="card">
+        <h2>1. Choose your interview lane</h2>
+        <p>Select a role, difficulty, and question count. Each interview is randomized from a curated bank.</p>
+      </article>
+      <article class="card">
+        <h2>2. Answer inside a timer</h2>
+        <p>Stay sharp with a live countdown, draft persistence, and a focused question-by-question workspace.</p>
+      </article>
+      <article class="card">
+        <h2>3. Review what matters</h2>
+        <p>See per-question scores, strengths, weaknesses, and specific suggestions for improvement.</p>
+      </article>
+      <article class="card">
+        <h2>4. Track real progress</h2>
+        <p>Use the dashboard to follow completion rate, score trends, and repeated practice by role.</p>
+      </article>
+    </section>
+
+    <section class="card wide-card">
+      <div class="section-heading">
+        <span class="eyebrow">System flow</span>
+        <h2>From sign-in to scored review in one loop</h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <span class="timeline-step">01</span>
+          <div>
+            <h3>Authenticate</h3>
+            <p>Create an account or log in. The client stores a JWT and uses it for protected requests.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-step">02</span>
+          <div>
+            <h3>Start interview</h3>
+            <p>The backend generates a fresh question set, stores the session, and returns the timer window.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-step">03</span>
+          <div>
+            <h3>Submit answers</h3>
+            <p>Answers are evaluated by OpenAI when available, or a deterministic scoring fallback when not.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span class="timeline-step">04</span>
+          <div>
+            <h3>Track results</h3>
+            <p>Dashboard APIs aggregate scores, history, and role-based performance to show progress clearly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
