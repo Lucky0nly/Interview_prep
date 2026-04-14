@@ -36,7 +36,14 @@ def start_interview(
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
 
-    questions = generate_questions(role, difficulty, payload.num_questions)
+    try:
+        questions = generate_questions(role, difficulty, payload.num_questions)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="DeepSeek question generation failed. Please check the API key, model, or network and try again.",
+        ) from exc
+
     attempt_number = (
         db.query(Interview)
         .filter(Interview.user_id == current_user.id, Interview.role == role, Interview.difficulty == difficulty)
@@ -92,7 +99,14 @@ def submit_interview(
             detail=f"Expected {len(interview.questions)} answers, received {len(payload.answers)}.",
         )
 
-    evaluation = evaluate_interview(interview.role, interview.difficulty, interview.questions, payload.answers)
+    try:
+        evaluation = evaluate_interview(interview.role, interview.difficulty, interview.questions, payload.answers)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="DeepSeek evaluation failed. Please check the API key, model, or network and try again.",
+        ) from exc
+
     interview.answers = payload.answers
     interview.scores = evaluation["scores"]
     interview.feedback = evaluation["feedback"]

@@ -1,5 +1,7 @@
 import random
 
+from backend.services.ai_service import generate_questions_with_ai
+
 SUPPORTED_ROLES = {
     "Software Engineer": {
         "Easy": [
@@ -159,8 +161,19 @@ def get_interview_duration(num_questions: int) -> int:
 def generate_questions(role: str, difficulty: str, num_questions: int) -> list[str]:
     normalized_role = normalize_role(role)
     normalized_difficulty = normalize_difficulty(difficulty)
+    requested_count = max(5, min(num_questions, 10))
+    selected_questions: list[str] = []
+
+    ai_questions = generate_questions_with_ai(normalized_role, normalized_difficulty, requested_count)
+    if ai_questions:
+        selected_questions.extend(ai_questions[:requested_count])
 
     available_questions = list(SUPPORTED_ROLES[normalized_role][normalized_difficulty])
     random.shuffle(available_questions)
-    requested_count = max(5, min(num_questions, 10))
-    return available_questions[:requested_count]
+    for question in available_questions:
+        if question not in selected_questions:
+            selected_questions.append(question)
+        if len(selected_questions) >= requested_count:
+            break
+
+    return selected_questions[:requested_count]

@@ -536,7 +536,14 @@ function apiRequest(path, options = {}) {
     headers,
     body: options.body && !(options.body instanceof FormData) ? JSON.stringify(options.body) : options.body,
   }).then(async (response) => {
-    const data = await response.json().catch(() => ({}));
+    const rawText = await response.text();
+    let data = {};
+    try {
+      data = rawText ? JSON.parse(rawText) : {};
+    } catch {
+      data = { detail: rawText || "Request failed." };
+    }
+
     if (!response.ok) {
       if (response.status === 401) {
         logout(false);

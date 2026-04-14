@@ -15,64 +15,130 @@ ROLE_KEYWORDS = {
 }
 
 
+def generate_questions_with_ai(role: str, difficulty: str, num_questions: int) -> list[str] | None:
+    client = _build_ai_client()
+    if client is None:
+        return None
+
+    prompt = f"""
+Generate exactly {num_questions} interview questions.
+
+Role: {role}
+Difficulty: {difficulty}
+
+Rules:
+- Make the questions practical and role-specific.
+- Do not repeat the same idea.
+- Match the difficulty level closely.
+- Return JSON only in this shape:
+{{"questions":["question 1","question 2"]}}
+""".strip()
+
+    response = _create_chat_completion(
+        client=client,
+        system_message="You are an expert interviewer. Return valid JSON only.",
+        user_message=prompt,
+        temperature=0.7,
+    )
+    parsed = _load_json(response)
+    questions = parsed.get("questions", [])
+    if not isinstance(questions, list):
+        return None
+
+    normalized_questions = []
+    for item in questions:
+        question = str(item).strip()
+        if question and question not in normalized_questions:
+            normalized_questions.append(question)
+
+    return normalized_questions[:num_questions] if normalized_questions else None
+
+
 def evaluate_interview(role: str, difficulty: str, questions: list[str], answers: list[str]) -> dict[str, Any]:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if api_key and OpenAI is not None:
-        try:
-            return _evaluate_with_openai(api_key, role, difficulty, questions, answers)
-        except Exception:
-            return _evaluate_with_mock(role, difficulty, questions, answers)
+    client = _build_ai_client()
+    if client is not None:
+        return _evaluate_with_ai(client, role, difficulty, questions, answers)
     return _evaluate_with_mock(role, difficulty, questions, answers)
 
 
-def _evaluate_with_openai(api_key: str, role: str, difficulty: str, questions: list[str], answers: list[str]) -> dict[str, Any]:
-    client = OpenAI(api_key=api_key)
-    prompt = {
-        "role": role,
-        "difficulty": difficulty,
-        "instructions": [
-            "Evaluate each answer on a 0-10 scale.",
-            "Be fair, concise, and practical.",
-            "Return strict JSON only.",
-            "Each item should include strengths, weaknesses, and suggestions.",
-            "Provide an overall summary with strengths, weaknesses, and next steps.",
-        ],
-        "responses": [{"question": question, "answer": answer} for question, answer in zip(questions, answers)],
-        "output_schema": {
-            "questions": [
-                {
-                    "score": "number between 0 and 10",
-                    "strengths": ["string"],
-                    "weaknesses": ["string"],
-                    "suggestions": ["string"],
-                }
-            ],
-            "overall": {
-                "summary": "string",
-                "strengths": ["string"],
-                "weaknesses": ["string"],
-                "suggestions": ["string"],
-            },
-        },
+def _evaluate_with_ai(client, role: str, difficulty: str, questions: list[str], answers: list[str]) -> dict[str, Any]:
+    serialized_responses = json.dumps(
+        [{"question": question, "answer": answer} for question, answer in zip(questions, answers)],
+        ensure_ascii=True,
+    )
+    prompt = f"""
+Evaluate the submitted interview answers.
+
+Role: {role}
+Difficulty: {difficulty}
+
+Scoring rules:
+- Score each answer from 0 to 10.
+- Reward correctness, relevance, clarity, depth, examples, and tradeoff thinking.
+- Give high scores to genuinely strong answers.
+- Do not punish an answer just for being concise if it is correct and complete.
+- Suggestions must be actionable and specific.
+
+Responses:
+{serialized_responses}
+
+Return JSON only in this exact shape:
+{{
+  "questions": [
+    {{
+      "score": 8.5,
+      "strengths": ["..."],
+      "weaknesses": ["..."],
+      "suggestions": ["..."]
+    }}
+  ],
+  "overall": {{
+    "summary": "...",
+    "strengths": ["..."],
+    "weaknesses": ["..."],
+    "suggestions": ["..."]
+  }}
+}}
+""".strip()
+
+    response = _create_chat_completion(
+        client=client,
+        system_message="You are an expert technical interviewer. Return valid JSON only.",
+        user_message=prompt,
+        temperature=0.1,
+    )
+    parsed = _load_json(response)
+    return _normalize_evaluation(role, difficulty, questions, answers, parsed)
+
+
+def _build_ai_client():
+    api_key = os.getenv("DEEPSEEK_API_KEY") or os.getenv("OPENAI_API_KEY")
+    if not api_key or OpenAI is None:
+        return None
+
+    base_url = os.getenv("DEEPSEEK_BASE_URL", "https://openrouter.ai/api/v1")
+    default_headers = {
+        "HTTP-Referer": os.getenv("DEEPSEEK_HTTP_REFERER", "http://localhost"),
+        "X-Title": os.getenv("DEEPSEEK_APP_NAME", "AI Interview Preparation System"),
     }
 
+    return OpenAI(api_key=api_key, base_url=base_url, default_headers=default_headers)
+
+
+def _get_model_name() -> str:
+    return os.getenv("DEEPSEEK_MODEL") or os.getenv("OPENAI_MODEL", "deepseek/deepseek-chat")
+
+
+def _create_chat_completion(client, system_message: str, user_message: str, temperature: float) -> str:
     response = client.chat.completions.create(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-        temperature=0.2,
+        model=_get_model_name(),
+        temperature=temperature,
         messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are an expert technical interviewer. Always return valid JSON without markdown fences "
-                    "or extra narration."
-                ),
-            },
-            {"role": "user", "content": json.dumps(prompt)},
+            {"role": "system", "content": system_message},
+            {"role": "user", "content": user_message},
         ],
     )
-    content = response.choices[0].message.content or "{}"
-    parsed = _load_json(content)
-    return _normalize_evaluation(role, difficulty, questions, answers, parsed)
+    return response.choices[0].message.content or "{}"
 
 
 def _evaluate_with_mock(role: str, difficulty: str, questions: list[str], answers: list[str]) -> dict[str, Any]:
@@ -218,7 +284,14 @@ def _load_json(content: str) -> dict[str, Any]:
     if cleaned.startswith("```"):
         cleaned = cleaned.strip("`")
         cleaned = cleaned.replace("json", "", 1).strip()
-    return json.loads(cleaned)
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        start = cleaned.find("{")
+        end = cleaned.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            return json.loads(cleaned[start : end + 1])
+        raise ValueError("AI response was not valid JSON.")
 
 
 def _normalize_list(value: Any, fallback: str) -> list[str]:
