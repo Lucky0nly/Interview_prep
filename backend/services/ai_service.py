@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 import os
-from typing import Any
+from typing import Any, List, Optional
 
 try:
     from openai import OpenAI
@@ -15,7 +17,7 @@ ROLE_KEYWORDS = {
 }
 
 
-def generate_questions_with_ai(role: str, difficulty: str, num_questions: int) -> list[str] | None:
+def generate_questions_with_ai(role: str, difficulty: str, num_questions: int) -> Optional[List[str]]:
     client = _build_ai_client()
     if client is None:
         return None

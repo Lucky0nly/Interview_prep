@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from datetime import datetime
-from typing import Any
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -43,8 +45,8 @@ class InterviewHistoryItem(BaseModel):
     attempt_number: int
     questions: list[str]
     answers: list[str]
-    scores: dict[str, Any] | None
-    feedback: dict[str, Any] | None
+    scores: Optional[Dict[str, Any]]
+    feedback: Optional[Dict[str, Any]]
     created_at: datetime
     status: str
 

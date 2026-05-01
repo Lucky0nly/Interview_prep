@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import re
+from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -32,7 +35,7 @@ def validate_password_strength(password: str) -> str:
     return password
 
 
-def get_user_by_email(db: Session, email: str) -> User | None:
+def get_user_by_email(db: Session, email: str) -> Optional[User]:
     normalized_email = validate_email(email)
     return db.query(User).filter(User.email == normalized_email).first()
 
@@ -52,7 +55,7 @@ def register_user(db: Session, email: str, password: str) -> User:
     return user
 
 
-def authenticate_user(db: Session, email: str, password: str) -> User | None:
+def authenticate_user(db: Session, email: str, password: str) -> Optional[User]:
     normalized_email = validate_email(email)
     user = db.query(User).filter(User.email == normalized_email).first()
     if not user or not verify_password(password, user.password_hash):

@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import os
 from datetime import datetime, timedelta, timezone
+from typing import Dict, Optional, Union
 
 from fastapi import HTTPException, status
 from jose import JWTError, jwt
@@ -9,7 +12,7 @@ from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def get_jwt_settings() -> dict[str, str | int]:
+def get_jwt_settings() -> Dict[str, Union[str, int]]:
     return {
         "secret_key": os.getenv("JWT_SECRET_KEY", "development-secret-key"),
         "algorithm": os.getenv("JWT_ALGORITHM", "HS256"),
@@ -25,7 +28,7 @@ def verify_password(plain_password: str, password_hash: str) -> bool:
     return pwd_context.verify(plain_password, password_hash)
 
 
-def create_access_token(subject: str | int, expires_delta: timedelta | None = None) -> str:
+def create_access_token(subject: Union[str, int], expires_delta: Optional[timedelta] = None) -> str:
     settings = get_jwt_settings()
     expire_delta = expires_delta or timedelta(minutes=int(settings["access_token_expire_minutes"]))
     expire_at = datetime.now(timezone.utc) + expire_delta
